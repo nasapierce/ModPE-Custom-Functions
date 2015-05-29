@@ -135,6 +135,10 @@ ModPE.colorTipMessage = function(message,color){
 	}
 };
 
+var ModPE.decodeBase64 = function(input,outputPath,outputFile){
+	Base64Decode(android.util.Base64.decode(input,0),outputPath+outputFile);
+};
+
 /* Custom Functions by Kyurem838*/
 Level.getPlayer = function(name) {
 	return Server.getAllPlayers[Server.getAllPlayerNames().indexOf(name)];
@@ -302,6 +306,7 @@ Methods:
 ModPE.colorMessage(msg,color); //makes a colored clientMessage();
 //colors must me BL ChatColor's aka RED PURPLE GOLD GREEN BLUE CYAN ect.
 ModPE.colorTipMessage(msg,color); //makes a colored ModPE.showTipMessage();
+ModPE.decodeBase64(input,outputPath,outputFile); //outputs a base64 file into said directory
 ModPE.downloadFile(URL, downloadDir, fileName); //Downloads the specified file from the specified URL in the specified directory with the specified file name
 ModPE.serverScript(boolean); //turns scripting on for servers, and enables Server.sendChat();
 
