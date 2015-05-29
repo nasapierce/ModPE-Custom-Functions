@@ -336,24 +336,3 @@ Item.getItemByUnlocalizedName(unlocalizedName); //Gets the item with the specifi
 Block.getAllBlocks(); //Gets all blocks; does not get damage values
 Block.defineBlock(ID, unlocalizedName, localizedName, textures, baseMaterial, isOpaque, renderShape, destroyTime, explosionResistance, lightLevel, lightOpacity, color, renderLayer, shape); //Creates a new block with the specified statuses. The parameter color is an array, like in Block.setColor(), and the parameter shape is an array, containing the x1, y1, z1, x2, y2, and z2 parameters; although this method is already defined, more parameters have been added
 //The unlocalized name and localized name is the same as above, except that it isn't item. and .name, but tile. and .name.*/
-
-/*#### YOUR CODE BELOW ######
-###### YOUR CODE BELOW ######
-###### YOUR CODE BELOW ####*/
-
-//these are just examples, use if you want
-function newLevel(){
-	if(ModPE.matchMcpe("0.10.4")){
-		ModPE.serverScript(true); //enables you to have the script on a server
-		ModPE.colorMessage("Welcome to WolfPE custom functions for ModPE!","RED"); //Color must be all Caps! look at source for other colors
-	}
-	else{
-		ModPE.colorMessage("UPDATE MCPE OR THIS MOD!","RED"); //Color must be all Caps! look at source for other colors
-		ModPE.colorTipMessage("UPDATE MCPE OR THIS MOD!","RED"); //Color must be all Caps! look at source for other colors
-		print("UPDATE MCPE OR THIS MOD!");
-	}
-}
-
-function useItem(x,y,z,item,block,side,itemData,blockData){
-	Level.extinguishFire(x,y,z,side); //extinguish any fire you tap on
-}
