@@ -1,26 +1,7 @@
-/* Put together by Darkserver
-   Credit to Kyurem838 for custom functions from his ModPE help
-*/
 
-ModPE.matchMcpe = function(version){
-	if(version==ModPE.getMinecraftVersion()){
-		return true;
-	}
-	else{
-		return false;
-	}
-};
+/* ModPE */
 
-Level.checkChestForId = function(x,y,z,id,amount,damage){
-	if(!amount) amount = 1;
-	if(!damage) damage = 0;
-	if(!id) id = 0;
-	var count = 0;
-	for(var i = 0; i < 255; i++) if(Level.getChestSlot(x,y,z,i) == id && Level.getChestSlotData(x,y,z,i) == damage) count += Level.getChestSlotCount(x,y,z,i);
-	return count >= amount;
-};
-
-ModPE.serverScript = function(toggle){ //Enables ModPE on servers
+ModPE.serverScript = function(toggle) { //Enables ModPE on servers
 	com.mojang.minecraftpe.MainActivity.currentMainActivity.get().runOnUiThread(new java.lang.Runnable({run: function() {
 		net.zhuoweizhang.mcpelauncher.ScriptManager.isRemote = true; //As in Java, 1 isn't true, the variable must be set to true, and 1 isn't an option.
 	}}));
@@ -29,7 +10,7 @@ ModPE.serverScript = function(toggle){ //Enables ModPE on servers
 	}
 };
 
-ModPE.colorMessage = function(message,color){
+ModPE.colorMessage = function(message, color){
 	switch(color){
 		case "RED":
 			clientMessage(ChatColor.RED+""+message);
@@ -82,7 +63,7 @@ ModPE.colorMessage = function(message,color){
 	}
 };
 
-ModPE.colorTipMessage = function(message,color){
+ModPE.colorTipMessage = function(message, color){
 	switch(color){
 		case "RED":
 			ModPE.showTipMessage(ChatColor.RED+message);
@@ -135,11 +116,29 @@ ModPE.colorTipMessage = function(message,color){
 	}
 };
 
-var ModPE.decodeBase64 = function(input,outputPath,outputFile){
+ModPE.decodeBase64 = function(input, outputPath, outputFile){
 	Base64Decode(android.util.Base64.decode(input,0),outputPath+outputFile);
 };
 
-/* Custom Functions by Kyurem838*/
+ModPE.downloadFile = function(url, downloadDir, fileName) {
+	var file = new java.io.File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + dowloadDir + (downloadIr.charAt(downloadDir.length - 1) == "/" ? fileName : "/" + fileName));
+	file.createNewFile();
+	var fos = new java.io.FileOutputStream(file);
+	var response = android.net.http.AndroidHttpClient.newInstance("ModPE.downloadFile()").execute(new org.apache.http.client.methods.HttpGet(url)).response.getEntity().writeTo(fos);
+	fos.close();
+};
+
+/* Level */
+
+Level.checkChestForId = function(x, y, z, id, amount, damage) {
+	if(!amount) amount = 1;
+	if(!damage) damage = 0;
+	if(!id) id = 0;
+	var count = 0;
+	for(var i = 0; i < 255; i++) if(Level.getChestSlot(x,y,z,i) == id && Level.getChestSlotData(x,y,z,i) == damage) count += Level.getChestSlotCount(x,y,z,i);
+	return count >= amount;
+};
+
 Level.getPlayer = function(name) {
 	return Server.getAllPlayers[Server.getAllPlayerNames().indexOf(name)];
 };
@@ -175,10 +174,25 @@ Level.spawnJockey = function(x, y, z, mobs) {
 	return ents;
 };
 
-
 Level.extinguishFire = function(x, y, z, side) {
 	net.zhuoweizhang.mcpelauncher.ScriptManager.nativeExtinguishFire(x, y, z, side);
 };
+
+/* Entity */
+
+Entity.duplicate = function(entity, x, y, z) {
+	var ent = Level.spawnMob(x, y, z, Entity.getEntityTypeId(entity), Entity.getMobSkin(entity));
+	Entity.setAnimalAge(ent, Entity.getAnimalAge(entity));
+	Entity.setRenderType(ent, Entity.getRenderType(entity));
+	Entity.setRot(ent, Entity.getYaw(entity), Entity.getPitch(entity));
+	Entity.setHealth(ent, Entity.getHealth(entity));
+	Entity.setVelX(ent, Entity.getVelX(entity));
+	Entity.setVelY(ent, Entity.getVelY(entity));
+	Entity.setVelZ(ent, Entity.getVelZ(entity));
+	Entity.setNameTag(ent, Entity.getNameTag(entity));
+};
+
+/* Player */
 
 Player.setInventorySlot = function(slot, id, amount, damage) {
 	net.zhuoweizhang.mcpelauncher.ScriptManager.nativeSetInventorySlot(slot + 9, id, amount, damage);
@@ -220,6 +234,8 @@ Player.checkForInventoryItem = function(id, amount, damage) {
 	return count >= amount;
 };
 
+/* Item */
+
 Item.defineItem = function(id, unlocalizedName, localizedName, stackLimit, maxDamage, category, textureName, additionalTextures, isEquipped) {
 	ModPE.setItem(id, textureName, additionalTextures, unlocalizedName, stackLimit ? stackLimit : 64);
 	ModPE.langEdit("item." + unlocalizedName + ".name", localizedName);
@@ -239,18 +255,11 @@ Item.getItemByUnlocalizedName = function(unlocalizedName) {
 	for(var i = 0; i < 512; i++) if(Item.getName(i, 0, 1)) if(Item.getName(i, 0, 1).split(".")[1] == unlocalizedName) return i;
 };
 
-Block.getAllBlocks = function() {
-	function is(i) {
-		return !Item.getName(i, 0, 1) && (!i || i == 253 || i == 254 || i == 255);
-	}
-	
-	var retarr = [];
-	for(var i = 0; i < 256; i++) {
-		if(is(i)) retarr.push(i);
-		if(Item.getName(i, 0, 1)) if(Item.getName(i, 0, 1).split(".")[0] == "tile") retarr.push(i);
-	}
-	return retarr;
+Item.setName = function(id, damage, name) {
+	if(Item.getName(id, damage, 1)) ModPE.langEdit(Item.getName(id, damage, 1) + ".name", name);
 };
+
+/* Block */
 
 Block.defineBlock = function(id, unlocalizedName, localizedName, textures, baseMaterial, isOpaque, renderShape, destroyTime, explosionResistance, lightLevel, lightOpacity, color, renderLayer, shape) {
 	com.mojang.minecraftpe.MainActivity.currentMainActivity.get().runOnUiThread({run: function() {
@@ -268,37 +277,6 @@ Block.defineBlock = function(id, unlocalizedName, localizedName, textures, baseM
 		} catch(e) {}
 	}});
 };
-
-Entity.duplicate = function(entity, x, y, z) {
-	var ent = Level.spawnMob(x, y, z, Entity.getEntityTypeId(entity), Entity.getMobSkin(entity));
-	Entity.setAnimalAge(ent, Entity.getAnimalAge(entity));
-	Entity.setRenderType(ent, Entity.getRenderType(entity));
-	Entity.setRot(ent, Entity.getYaw(entity), Entity.getPitch(entity));
-	Entity.setHealth(ent, Entity.getHealth(entity));
-	Entity.setVelX(ent, Entity.getVelX(entity));
-	Entity.setVelY(ent, Entity.getVelY(entity));
-	Entity.setVelZ(ent, Entity.getVelZ(entity));
-	Entity.setNameTag(ent, Entity.getNameTag(entity));
-};
-
-Item.setName = function(id, damage, name) {
-	if(Item.getName(id, damage, 1)) ModPE.langEdit(Item.getName(id, damage, 1) + ".name", name);
-};
-
-Item.getAllItems = function() {
-	var retarr = [];
-	for(var i = 0; i < 512; i++) if(Item.getName(i, 0, 1)) if(Item.getName(i, 0, 1).split(".")[0] == "item") retarr.push(i);
-	return retarr;
-};
-
-ModPE.downloadFile = function(url, downloadDir, fileName) {
-	var file = new java.io.File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + dowloadDir + (downloadIr.charAt(downloadDir.length - 1) == "/" ? fileName : "/" + fileName));
-	file.createNewFile();
-	var fos = new java.io.FileOutputStream(file);
-	var response = android.net.http.AndroidHttpClient.newInstance("ModPE.downloadFile()").execute(new org.apache.http.client.methods.HttpGet(url)).response.getEntity().writeTo(fos);
-	fos.close();
-};
-/* Custom Functions from Kyurem838 */
 
 /*
 Methods:
